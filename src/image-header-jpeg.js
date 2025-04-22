@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple} from './utils.js';
 import Constants from './constants.js';
 
 export default {
@@ -146,21 +146,21 @@ function isApp2ICCMarker(dataView, appMarkerPosition) {
     const markerIdLength = APP2_ICC_IDENTIFIER.length;
 
     return (dataView.getUint16(appMarkerPosition) === APP2_MARKER)
-        && (getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP2_ICC_IDENTIFIER);
+        && (getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP2_ICC_IDENTIFIER);
 }
 
 function isApp2MPFMarker(dataView, appMarkerPosition) {
     const markerIdLength = APP2_MPF_IDENTIFIER.length;
 
     return (dataView.getUint16(appMarkerPosition) === APP2_MARKER)
-        && (getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP2_MPF_IDENTIFIER);
+        && (getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP2_MPF_IDENTIFIER);
 }
 
 function isApp0JfifMarker(dataView, appMarkerPosition) {
     const markerIdLength = APP0_JFIF_IDENTIFIER.length;
 
     return (dataView.getUint16(appMarkerPosition) === APP0_MARKER)
-        && (getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP0_JFIF_IDENTIFIER)
+        && (getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP0_JFIF_IDENTIFIER)
         && (dataView.getUint8(appMarkerPosition + APP_ID_OFFSET + markerIdLength) === 0x00);
 }
 
@@ -168,7 +168,7 @@ function isApp1ExifMarker(dataView, appMarkerPosition) {
     const markerIdLength = APP1_EXIF_IDENTIFIER.length;
 
     return (dataView.getUint16(appMarkerPosition) === APP1_MARKER)
-        && (getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_EXIF_IDENTIFIER)
+        && (getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_EXIF_IDENTIFIER)
         && (dataView.getUint8(appMarkerPosition + APP_ID_OFFSET + markerIdLength) === 0x00);
 }
 
@@ -179,7 +179,7 @@ function isApp1XmpMarker(dataView, appMarkerPosition) {
 
 function isXmpIdentifier(dataView, appMarkerPosition) {
     const markerIdLength = APP1_XMP_IDENTIFIER.length;
-    return getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_XMP_IDENTIFIER;
+    return getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_XMP_IDENTIFIER;
 }
 
 function isApp1ExtendedXmpMarker(dataView, appMarkerPosition) {
@@ -189,7 +189,7 @@ function isApp1ExtendedXmpMarker(dataView, appMarkerPosition) {
 
 function isExtendedXmpIdentifier(dataView, appMarkerPosition) {
     const markerIdLength = APP1_XMP_EXTENDED_IDENTIFIER.length;
-    return getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_XMP_EXTENDED_IDENTIFIER;
+    return getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP1_XMP_EXTENDED_IDENTIFIER;
 }
 
 function getXmpChunkDetails(appMarkerPosition, fieldLength) {
@@ -210,7 +210,7 @@ function isApp13PhotoshopMarker(dataView, appMarkerPosition) {
     const markerIdLength = APP13_IPTC_IDENTIFIER.length;
 
     return (dataView.getUint16(appMarkerPosition) === APP13_MARKER)
-        && (getStringFromDataView(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP13_IPTC_IDENTIFIER)
+        && (getStringFromBytesSimple(dataView, appMarkerPosition + APP_ID_OFFSET, markerIdLength) === APP13_IPTC_IDENTIFIER)
         && (dataView.getUint8(appMarkerPosition + APP_ID_OFFSET + markerIdLength) === 0x00);
 }
 

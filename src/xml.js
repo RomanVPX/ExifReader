@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple} from './utils.js';
 
 export default {
     isXMLFile,
@@ -13,7 +13,7 @@ const XML_MARKER_OFFSET = 0;
 const XML_MARKER = '<?xpacket begin';
 
 function isXMLFile(dataView) {
-    return !!dataView && getStringFromDataView(dataView, XML_MARKER_OFFSET, XML_MARKER.length) === XML_MARKER;
+    return !!dataView && getStringFromBytesSimple(dataView, XML_MARKER_OFFSET, XML_MARKER.length) === XML_MARKER;
 }
 
 function findOffsets(dataView) {

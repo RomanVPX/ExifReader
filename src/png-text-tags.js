@@ -4,7 +4,7 @@
 
 // Specification: http://www.libpng.org/pub/png/spec/1.2/
 
-import {getStringValueFromArray, getStringFromDataView, decompress, COMPRESSION_METHOD_NONE} from './utils.js';
+import {getStringValueFromArray, getStringFromBytesSimple, decompress, COMPRESSION_METHOD_NONE} from './utils.js';
 import TagDecoder from './tag-decoder.js';
 import {TYPE_TEXT, TYPE_ITXT, TYPE_ZTXT} from './image-header-png.js';
 import Tags from './tags.js';
@@ -169,7 +169,7 @@ function getName(type, langChars, keywordChars) {
 
 function getValue(valueChars) {
     if (valueChars instanceof DataView) {
-        return getStringFromDataView(valueChars, 0, valueChars.byteLength);
+        return getStringFromBytesSimple(valueChars, 0, valueChars.byteLength);
     }
     return valueChars;
 }

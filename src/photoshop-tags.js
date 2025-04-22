@@ -4,7 +4,7 @@
 
 // Specification: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/
 
-import {getDataView, getStringFromDataView, getPascalStringFromDataView} from './utils.js';
+import {getDataView, getStringFromBytesSimple, getPascalStringFromDataView} from './utils.js';
 import Types from './types.js';
 import TagNames from './photoshop-tag-names.js';
 
@@ -24,7 +24,7 @@ function read(bytes, includeUnknown) {
     let offset = 0;
 
     while (offset < bytes.length) {
-        const signature = getStringFromDataView(dataView, offset, SIGNATURE_SIZE);
+        const signature = getStringFromBytesSimple(dataView, offset, SIGNATURE_SIZE);
         offset += SIGNATURE_SIZE;
         const tagId = Types.getShortAt(dataView, offset);
         offset += TAG_ID_SIZE;
@@ -36,7 +36,7 @@ function read(bytes, includeUnknown) {
             const valueDataView = getDataView(dataView.buffer, offset, resourceSize);
             const tag = {
                 id: tagId,
-                value: getStringFromDataView(valueDataView, 0, resourceSize),
+                value: getStringFromBytesSimple(valueDataView, 0, resourceSize),
             };
             if (TagNames[tagId]) {
                 try {

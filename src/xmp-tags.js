@@ -2,7 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView, objectAssign} from './utils.js';
+// Use getStringFromDataViewUTF8 for reading XMP XML string
+import {getStringFromDataViewUTF8, objectAssign} from './utils.js';
 import XmpTagNames from './xmp-tag-names.js';
 import DOMParser from './dom-parser.js';
 import {isMissingNamespaceError, addMissingNamespaces} from './xmp-namespaces.js';
@@ -97,7 +98,8 @@ function getDocument(chunkDataView, _domParser) {
         throw new Error();
     }
 
-    const xmlString = typeof chunkDataView === 'string' ? chunkDataView : getStringFromDataView(chunkDataView, 0, chunkDataView.byteLength);
+    // Use UTF8 version here
+    const xmlString = typeof chunkDataView === 'string' ? chunkDataView : getStringFromDataViewUTF8(chunkDataView, 0, chunkDataView.byteLength);
     const doc = parseFromString(domParser, trimXmlSource(xmlString));
 
     return {
@@ -207,7 +209,8 @@ function getAttributes(element) {
     const attributes = {};
 
     for (let i = 0; i < element.attributes.length; i++) {
-        attributes[element.attributes[i].nodeName] = decodeURIComponent(escape(element.attributes[i].value));
+        // Directly use the attribute value, assuming it's correctly decoded earlier or handled by the XML parser.
+        attributes[element.attributes[i].nodeName] = element.attributes[i].value;
     }
 
     return attributes;
@@ -289,8 +292,10 @@ function getDescription(value, name = undefined) {
         if ((name) && (typeof XmpTagNames[name] === 'function')) {
             return XmpTagNames[name](value);
         }
-        return decodeURIComponent(escape(value));
+        // Directly return the value, assuming it's correctly decoded earlier.
+        return value;
     } catch (error) {
+        // If there's still an error, return the original value.
         return value;
     }
 }

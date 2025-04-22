@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple} from './utils.js';
 import Constants from './constants.js';
 
 export default {
@@ -16,8 +16,8 @@ function isWebpFile(dataView) {
     const WEBP_MARKER_OFFSET = 8;
     const WEBP_MARKER = 'WEBP';
 
-    return !!dataView && getStringFromDataView(dataView, RIFF_ID_OFFSET, RIFF_ID.length) === RIFF_ID
-        && getStringFromDataView(dataView, WEBP_MARKER_OFFSET, WEBP_MARKER.length) === WEBP_MARKER;
+    return !!dataView && getStringFromBytesSimple(dataView, RIFF_ID_OFFSET, RIFF_ID.length) === RIFF_ID
+        && getStringFromBytesSimple(dataView, WEBP_MARKER_OFFSET, WEBP_MARKER.length) === WEBP_MARKER;
 }
 
 function findOffsets(dataView) {
@@ -34,12 +34,12 @@ function findOffsets(dataView) {
     let vp8xChunkOffset;
 
     while (offset + CHUNK_HEADER_SIZE < dataView.byteLength) {
-        const chunkId = getStringFromDataView(dataView, offset, 4);
+        const chunkId = getStringFromBytesSimple(dataView, offset, 4);
         const chunkSize = dataView.getUint32(offset + CHUNK_SIZE_OFFSET, true);
 
         if (Constants.USE_EXIF && (chunkId === 'EXIF')) {
             hasAppMarkers = true;
-            if (getStringFromDataView(dataView, offset + CHUNK_HEADER_SIZE, EXIF_IDENTIFIER.length) === EXIF_IDENTIFIER) {
+            if (getStringFromBytesSimple(dataView, offset + CHUNK_HEADER_SIZE, EXIF_IDENTIFIER.length) === EXIF_IDENTIFIER) {
                 tiffHeaderOffset = offset + CHUNK_HEADER_SIZE + EXIF_IDENTIFIER.length;
             } else {
                 tiffHeaderOffset = offset + CHUNK_HEADER_SIZE;
