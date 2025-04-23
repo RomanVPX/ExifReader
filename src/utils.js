@@ -12,12 +12,51 @@ export function getDataView(data, byteOffset, byteLength) {
     }
 }
 
-export function getStringFromDataView(dataView, offset, length) {
+// Renamed function: Uses TextDecoder for proper UTF-8 decoding (e.g., for XMP).
+export function getStringFromDataViewUTF8(dataView, offset, length) {
+  // (Keep the existing TextDecoder logic here)
+  // Use TextDecoder to correctly decode UTF-8 (or other encodings if specified)
+    try {
+        // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
+        // Let's assume UTF-8 by default for XMP context.
+        // Need to create a view on the specific part of the buffer.
+        const actualLength = Math.min(length, dataView.byteLength - offset);
+        if (actualLength <= 0) {
+            return '';
+        }
+        const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
+        // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
+        return new TextDecoder('utf-8', { ignoreBOM: true, fatal: false }).decode(uint8Array);
+    } catch (e) {
+        console.error("Failed to decode string using TextDecoder:", e);
+        // Return empty string on decode error.
+        return ''; // Fallback to original potentially broken method maybe?
+    }
+}
+
+// New function: Original byte-by-byte logic for reading signatures/IDs.
+export function getStringFromBytesSimple(dataView, offset, length) {
     const chars = [];
     for (let i = 0; i < length && offset + i < dataView.byteLength; i++) {
         chars.push(dataView.getUint8(offset + i));
     }
-    return getStringValueFromArray(chars);
+        // Use TextDecoder to correctly decode UTF-8
+        try {
+            // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
+            // Let's assume UTF-8 by default for XMP context.
+            // Need to create a view on the specific part of the buffer.
+            const actualLength = Math.min(length, dataView.byteLength - offset);
+            if (actualLength <= 0) {
+                return '';
+            }
+            const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
+            // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
+            return new TextDecoder('utf-8', { ignoreBOM: true, fatal: false }).decode(uint8Array);
+        } catch (e) {
+            console.error("Failed to decode string using TextDecoder:", e);
+            // Return empty string on decode error.
+            return ''; // Fallback to original potentially broken method maybe?
+        }
 }
 
 export function getNullTerminatedStringFromDataView(dataView, offset) {
@@ -31,6 +70,7 @@ export function getNullTerminatedStringFromDataView(dataView, offset) {
         chars.push(char);
         i++;
     }
+    // Note: getStringValueFromArray still uses String.fromCharCode on each byte.
     return getStringValueFromArray(chars);
 }
 

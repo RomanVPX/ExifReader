@@ -1,5 +1,5 @@
 import Constants from './constants.js';
-import {getNullTerminatedStringFromDataView, getStringFromDataView} from './utils.js';
+import {getNullTerminatedStringFromDataView, getStringFromBytesSimple} from './utils.js';
 // import {get64BitValue} from './image-header-iso-bmff-utils.js';
 import {parseItemLocationBox} from './image-header-iso-bmff-iloc.js';
 
@@ -273,7 +273,7 @@ function findIccChunks(metaBox) {
 
 function parseFileTypeBox(dataView, contentOffset, boxLength) {
     const MAJOR_BRAND_SIZE = 4;
-    const majorBrand = getStringFromDataView(dataView, contentOffset, MAJOR_BRAND_SIZE);
+    const majorBrand = getStringFromBytesSimple(dataView, contentOffset, MAJOR_BRAND_SIZE);
 
     return {
         type: 'ftyp',
@@ -309,7 +309,7 @@ function parseColorInformationBox(dataView, contentOffset, length) {
 function parseIcc(dataView, contentOffset) {
     const COLOR_TYPE_SIZE = 4;
 
-    const colorType = getStringFromDataView(dataView, contentOffset, COLOR_TYPE_SIZE);
+    const colorType = getStringFromBytesSimple(dataView, contentOffset, COLOR_TYPE_SIZE);
     if (colorType !== 'prof' && colorType !== 'rICC') {
         // Support for nclx would require some restructuring for ICC handling.
         // Probably do it as a separate feature instead of combining with ICC.
