@@ -5,7 +5,7 @@
 // Specification: http://www.libpng.org/pub/png/spec/1.2/
 
 // Use getStringFromBytesSimple for reading signatures and chunk types
-import {getStringFromBytesSimple, getNullTerminatedStringFromDataView} from './utils.js';
+import {getStringFromDataViewUTF8, getNullTerminatedStringFromDataView} from './utils.js';
 import Constants from './constants.js';
 
 export default {
@@ -39,7 +39,7 @@ function isPngFile(dataView) {
     // Check PNG signature byte by byte
     for (let i = 0; i < PNG_ID_LENGTH; i++) {
         if (dataView.getUint8(i) !== PNG_ID_BYTES[i]) {
-        return false;
+            return false;
         }
     }
     return true;
@@ -71,7 +71,7 @@ function findPngOffsets(dataView, async) {
         } else if (isPngTextChunk(dataView, offset, async)) {
             offsets.hasAppMarkers = true;
             // Use simple byte reader for chunk type
-            const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+            const chunkType = getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
             if (!offsets.pngTextChunks) {
                 offsets.pngTextChunks = [];
             }
@@ -87,7 +87,7 @@ function findPngOffsets(dataView, async) {
             offsets.hasAppMarkers = true;
             const chunkDataLength = dataView.getUint32(offset + PNG_CHUNK_LENGTH_OFFSET);
             const iccHeaderOffset = offset + PNG_CHUNK_DATA_OFFSET;
-            const { profileName, compressionMethod, compressedProfileOffset } = parseIccHeader(dataView, iccHeaderOffset);
+            const {profileName, compressionMethod, compressedProfileOffset} = parseIccHeader(dataView, iccHeaderOffset);
             if (!offsets.iccChunks) {
                 offsets.iccChunks = [];
             }
@@ -119,35 +119,35 @@ function findPngOffsets(dataView, async) {
 function isPngImageHeaderChunk(dataView, offset) {
     const PNG_CHUNK_TYPE_IMAGE_HEADER = 'IHDR';
     // Use simple byte reader for chunk type
-    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === PNG_CHUNK_TYPE_IMAGE_HEADER;
+    return getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === PNG_CHUNK_TYPE_IMAGE_HEADER;
 }
 
 function isPngXmpChunk(dataView, offset) {
     // Use simple byte reader for chunk type and prefix
-    return (getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ITXT)
-        && (getStringFromBytesSimple(dataView, offset + PNG_CHUNK_DATA_OFFSET, PNG_XMP_PREFIX.length) === PNG_XMP_PREFIX);
+    return (getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ITXT)
+        && (getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_DATA_OFFSET, PNG_XMP_PREFIX.length) === PNG_XMP_PREFIX);
 }
 
 function isPngTextChunk(dataView, offset, async) {
     // Use simple byte reader for chunk type
-    const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+    const chunkType = getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
     return chunkType === TYPE_TEXT || chunkType === TYPE_ITXT || (chunkType === TYPE_ZTXT && async);
 }
 
 function isPngExifChunk(dataView, offset) {
     // Use simple byte reader for chunk type
-    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_EXIF;
+    return getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_EXIF;
 }
 
 function isPngIccpChunk(dataView, offset) {
     // Use simple byte reader for chunk type
-    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ICCP;
+    return getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ICCP;
 }
 
 function isPngChunk(dataView, offset) {
     const SUPPORTED_PNG_CHUNK_TYPES = [TYPE_PHYS, TYPE_TIME];
     // Use simple byte reader for chunk type
-    const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+    const chunkType = getStringFromDataViewUTF8(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
     return SUPPORTED_PNG_CHUNK_TYPES.includes(chunkType);
 }
 

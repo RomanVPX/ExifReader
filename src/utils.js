@@ -14,8 +14,8 @@ export function getDataView(data, byteOffset, byteLength) {
 
 // Renamed function: Uses TextDecoder for proper UTF-8 decoding (e.g., for XMP).
 export function getStringFromDataViewUTF8(dataView, offset, length) {
-  // (Keep the existing TextDecoder logic here)
-  // Use TextDecoder to correctly decode UTF-8 (or other encodings if specified)
+    // (Keep the existing TextDecoder logic here)
+    // Use TextDecoder to correctly decode UTF-8 (or other encodings if specified)
     try {
         // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
         // Let's assume UTF-8 by default for XMP context.
@@ -26,9 +26,9 @@ export function getStringFromDataViewUTF8(dataView, offset, length) {
         }
         const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
         // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
-        return new TextDecoder('utf-8', { ignoreBOM: true, fatal: false }).decode(uint8Array);
+        return new TextDecoder('utf-8', {ignoreBOM: true, fatal: false}).decode(uint8Array);
     } catch (e) {
-        console.error("Failed to decode string using TextDecoder:", e);
+        // console.error('Failed to decode string using TextDecoder:', e);
         // Return empty string on decode error.
         return ''; // Fallback to original potentially broken method maybe?
     }
@@ -40,23 +40,23 @@ export function getStringFromBytesSimple(dataView, offset, length) {
     for (let i = 0; i < length && offset + i < dataView.byteLength; i++) {
         chars.push(dataView.getUint8(offset + i));
     }
-        // Use TextDecoder to correctly decode UTF-8
-        try {
-            // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
-            // Let's assume UTF-8 by default for XMP context.
-            // Need to create a view on the specific part of the buffer.
-            const actualLength = Math.min(length, dataView.byteLength - offset);
-            if (actualLength <= 0) {
-                return '';
-            }
-            const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
-            // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
-            return new TextDecoder('utf-8', { ignoreBOM: true, fatal: false }).decode(uint8Array);
-        } catch (e) {
-            console.error("Failed to decode string using TextDecoder:", e);
-            // Return empty string on decode error.
-            return ''; // Fallback to original potentially broken method maybe?
+    // Use TextDecoder to correctly decode UTF-8
+    try {
+        // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
+        // Let's assume UTF-8 by default for XMP context.
+        // Need to create a view on the specific part of the buffer.
+        const actualLength = Math.min(length, dataView.byteLength - offset);
+        if (actualLength <= 0) {
+            return '';
         }
+        const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
+        // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
+        return new TextDecoder('utf-8', {ignoreBOM: true, fatal: false}).decode(uint8Array);
+    } catch (e) {
+        // console.error('Failed to decode string using TextDecoder:', e);
+        // Return empty string on decode error.
+        return ''; // Fallback to original potentially broken method maybe?
+    }
 }
 
 export function getNullTerminatedStringFromDataView(dataView, offset) {
@@ -87,7 +87,7 @@ export function getUnicodeStringFromDataView(dataView, offset, length) {
 
 export function getPascalStringFromDataView(dataView, offset) {
     const size = dataView.getUint8(offset);
-    const string = getStringFromDataView(dataView, offset + 1, size);
+    const string = getStringFromDataViewUTF8(dataView, offset + 1, size);
     return [size, string];
 }
 
