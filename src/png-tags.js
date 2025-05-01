@@ -15,7 +15,7 @@ function read(dataView, chunkOffsets) {
 
     for (let i = 0; i < chunkOffsets.length; i++) {
         const chunkLength = Types.getLongAt(dataView, chunkOffsets[i] + PNG_CHUNK_LENGTH_OFFSET);
-            const chunkType = getStringFromBytesSimple(dataView, chunkOffsets[i] + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+        const chunkType = getStringFromBytesSimple(dataView, chunkOffsets[i] + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
 
         if (chunkType === TYPE_PHYS) {
             tags['Pixels Per Unit X'] = getPixelsPerUnitX(dataView, chunkOffsets[i], chunkLength);
