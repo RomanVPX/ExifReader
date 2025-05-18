@@ -12,13 +12,16 @@ export default {
     findPngOffsets
 };
 
-const PNG_ID = '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a';
+// PNG signature: high-bit byte (0x89) + "PNG" + DOS line ending + DOS EOF + Unix line ending
+const PNG_ID_BYTES = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+const PNG_ID_LENGTH = PNG_ID_BYTES.length;
+
 const PNG_CHUNK_LENGTH_SIZE = 4;
 export const PNG_CHUNK_TYPE_SIZE = 4;
 export const PNG_CHUNK_LENGTH_OFFSET = 0;
 export const PNG_CHUNK_TYPE_OFFSET = PNG_CHUNK_LENGTH_SIZE;
 export const PNG_CHUNK_DATA_OFFSET = PNG_CHUNK_LENGTH_SIZE + PNG_CHUNK_TYPE_SIZE;
-const PNG_XMP_PREFIX = 'XML:com.adobe.xmp\x00';
+const PNG_XMP_PREFIX = 'XML:com.adobe.xmp';
 export const TYPE_TEXT = 'tEXt';
 export const TYPE_ITXT = 'iTXt';
 export const TYPE_ZTXT = 'zTXt';
@@ -28,7 +31,17 @@ export const TYPE_EXIF = 'eXIf';
 export const TYPE_ICCP = 'iCCP';
 
 function isPngFile(dataView) {
-    return !!dataView && getStringFromDataView(dataView, 0, PNG_ID.length) === PNG_ID;
+    if (!dataView || dataView.byteLength < PNG_ID_LENGTH) {
+        return false;
+    }
+
+    // Check PNG signature byte by byte
+    for (let i = 0; i < PNG_ID_LENGTH; i++) {
+        if (dataView.getUint8(i) !== PNG_ID_BYTES[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function findPngOffsets(dataView, async) {
@@ -38,7 +51,7 @@ function findPngOffsets(dataView, async) {
         hasAppMarkers: false
     };
 
-    let offset = PNG_ID.length;
+    let offset = PNG_ID_LENGTH;
 
     while (offset + PNG_CHUNK_LENGTH_SIZE + PNG_CHUNK_TYPE_SIZE <= dataView.byteLength) {
         if (Constants.USE_PNG_FILE && isPngImageHeaderChunk(dataView, offset)) {
