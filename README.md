@@ -1,6 +1,6 @@
 > [!note]
 > ### What the fork?
-> This fork contains quick-and-dirty fixes for correct UTF-8 reading. This is what an innocent desire to fix a tiny Raycast extension can sometimes lead to...
+> This fork contains quick-and-dirty fixes for correct UTF-8 reading. This is what an innocent desire to [fix a tiny Raycast extension](https://github.com/RomanVPX/Raycast-Exif-Viewer) can sometimes lead to...
 > I didn't touch the tests, so of course it doesn't pass them now, but it works perfectly with the ExifViewer extension for Raycast, _so my job here is done_.
 
 ---
