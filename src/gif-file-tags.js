@@ -5,7 +5,7 @@
 // https://www.w3.org/Graphics/GIF/spec-gif87.txt
 // https://www.w3.org/Graphics/GIF/spec-gif89a.txt
 
-import {getStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple} from './utils.js';
 
 export default {
     read
@@ -30,7 +30,7 @@ function getGifVersion(dataView) {
         return undefined;
     }
 
-    const value = getStringFromDataView(dataView, OFFSET, SIZE);
+    const value = getStringFromBytesSimple(dataView, OFFSET, SIZE);
     return {
         value,
         description: value

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView, objectAssign} from './utils.js';
+import {getStringFromDataViewUTF8, objectAssign} from './utils.js';
 import XmpTagNames from './xmp-tag-names.js';
 import DOMParser from './dom-parser.js';
 import {isMissingNamespaceError, addMissingNamespaces} from './xmp-namespaces.js';
@@ -97,7 +97,7 @@ function getDocument(chunkDataView, _domParser) {
         throw new Error();
     }
 
-    const xmlString = typeof chunkDataView === 'string' ? chunkDataView : getStringFromDataView(chunkDataView, 0, chunkDataView.byteLength);
+    const xmlString = typeof chunkDataView === 'string' ? chunkDataView : getStringFromDataViewUTF8(chunkDataView, 0, chunkDataView.byteLength);
     const doc = parseFromString(domParser, trimXmlSource(xmlString));
 
     return {

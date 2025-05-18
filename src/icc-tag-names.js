@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-import {getStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple} from './utils.js';
 
 export const iccTags = {
     'desc': {
@@ -28,7 +28,7 @@ export const iccTags = {
 export const iccProfile = {
     4: {
         'name': 'Preferred CMM type',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4),
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4),
         'description': (value) => value !== null ? toCompany(value) : '',
     },
     8: {
@@ -41,7 +41,7 @@ export const iccProfile = {
     },
     12: {
         'name': 'Profile/Device class',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4),
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4),
         'description': (value) => {
             switch (value.toLowerCase()) {
                 case 'scnr': return 'Input Device profile';
@@ -61,11 +61,11 @@ export const iccProfile = {
     },
     16: {
         'name': 'Color Space',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4)
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4)
     },
     20: {
         'name': 'Connection Space',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4)
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4)
     },
     24: {
         'name': 'ICC Profile Date',
@@ -77,17 +77,17 @@ export const iccProfile = {
     },
     40: {
         'name': 'Primary Platform',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4),
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4),
         'description': (value) => toCompany(value)
     },
     48: {
         'name': 'Device Manufacturer',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4),
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4),
         'description': (value) => toCompany(value)
     },
     52: {
         'name': 'Device Model Number',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4)
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4)
     },
     64: {
         'name': 'Rendering Intent',
@@ -105,7 +105,7 @@ export const iccProfile = {
 
     80: {
         'name': 'Profile Creator',
-        'value': (dataView, offset) => getStringFromDataView(dataView, offset, 4)
+        'value': (dataView, offset) => getStringFromBytesSimple(dataView, offset, 4)
     },
 };
 

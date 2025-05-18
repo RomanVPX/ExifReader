@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 import {iccTags, iccProfile} from './icc-tag-names.js';
-import {getStringFromDataView, getUnicodeStringFromDataView, decompress, COMPRESSION_METHOD_NONE, COMPRESSION_METHOD_DEFLATE} from './utils.js';
+import {getStringFromBytesSimple, getUnicodeStringFromDataView, decompress, COMPRESSION_METHOD_NONE, COMPRESSION_METHOD_DEFLATE} from './utils.js';
 
 export default {
     read
@@ -134,7 +134,7 @@ export function parseTags(dataView) {
             // Tags are corrupted (offset too far), return what we parsed until now
             return tags;
         }
-        const tagSignature = getStringFromDataView(dataView, tagHeaderOffset, 4);
+        const tagSignature = getStringFromBytesSimple(dataView, tagHeaderOffset, 4);
         const tagOffset = dataView.getUint32(tagHeaderOffset + 4);
         const tagSize = dataView.getUint32(tagHeaderOffset + 8);
 
@@ -142,7 +142,7 @@ export function parseTags(dataView) {
             // Tag data is invalid, lets return what we managed to parse
             return tags;
         }
-        const tagType = getStringFromDataView(dataView, tagOffset, 4);
+        const tagType = getStringFromBytesSimple(dataView, tagOffset, 4);
 
         if (tagType === TAG_TYPE_DESC) {
             const tagValueSize = dataView.getUint32(tagOffset + 8);
@@ -159,8 +159,8 @@ export function parseTags(dataView) {
             let offset = tagOffset + 16;
             const val = [];
             for (let recordNum = 0; recordNum < numRecords; recordNum++) {
-                const languageCode = getStringFromDataView(dataView, offset + 0, 2);
-                const countryCode = getStringFromDataView(dataView, offset + 2, 2);
+                const languageCode = getStringFromBytesSimple(dataView, offset + 0, 2);
+                const countryCode = getStringFromBytesSimple(dataView, offset + 2, 2);
                 const textLength = dataView.getUint32(offset + 4);
                 const textOffset = dataView.getUint32(offset + 8);
 

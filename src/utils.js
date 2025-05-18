@@ -80,7 +80,7 @@ export function getUnicodeStringFromDataView(dataView, offset, length) {
 
 export function getPascalStringFromDataView(dataView, offset) {
     const size = dataView.getUint8(offset);
-    const string = getStringFromDataView(dataView, offset + 1, size);
+    const string = getStringFromDataViewUTF8(dataView, offset + 1, size);
     return [size, string];
 }
 

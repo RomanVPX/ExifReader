@@ -4,7 +4,7 @@
 
 // Specification: http://www.libpng.org/pub/png/spec/1.2/
 
-import {getStringFromDataView, getNullTerminatedStringFromDataView} from './utils.js';
+import {getStringFromBytesSimple, getNullTerminatedStringFromDataView} from './utils.js';
 import Constants from './constants.js';
 
 export default {
@@ -55,7 +55,7 @@ function findPngOffsets(dataView, async) {
             }
         } else if (isPngTextChunk(dataView, offset, async)) {
             offsets.hasAppMarkers = true;
-            const chunkType = getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+            const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
             if (!offsets.pngTextChunks) {
                 offsets.pngTextChunks = [];
             }
@@ -102,30 +102,30 @@ function findPngOffsets(dataView, async) {
 
 function isPngImageHeaderChunk(dataView, offset) {
     const PNG_CHUNK_TYPE_IMAGE_HEADER = 'IHDR';
-    return getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === PNG_CHUNK_TYPE_IMAGE_HEADER;
+    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === PNG_CHUNK_TYPE_IMAGE_HEADER;
 }
 
 function isPngXmpChunk(dataView, offset) {
-    return (getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ITXT)
-        && (getStringFromDataView(dataView, offset + PNG_CHUNK_DATA_OFFSET, PNG_XMP_PREFIX.length) === PNG_XMP_PREFIX);
+    return (getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ITXT)
+        && (getStringFromBytesSimple(dataView, offset + PNG_CHUNK_DATA_OFFSET, PNG_XMP_PREFIX.length) === PNG_XMP_PREFIX);
 }
 
 function isPngTextChunk(dataView, offset, async) {
-    const chunkType = getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+    const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
     return chunkType === TYPE_TEXT || chunkType === TYPE_ITXT || (chunkType === TYPE_ZTXT && async);
 }
 
 function isPngExifChunk(dataView, offset) {
-    return getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_EXIF;
+    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_EXIF;
 }
 
 function isPngIccpChunk(dataView, offset) {
-    return getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ICCP;
+    return getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE) === TYPE_ICCP;
 }
 
 function isPngChunk(dataView, offset) {
     const SUPPORTED_PNG_CHUNK_TYPES = [TYPE_PHYS, TYPE_TIME];
-    const chunkType = getStringFromDataView(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
+    const chunkType = getStringFromBytesSimple(dataView, offset + PNG_CHUNK_TYPE_OFFSET, PNG_CHUNK_TYPE_SIZE);
     return SUPPORTED_PNG_CHUNK_TYPES.includes(chunkType);
 }
 
