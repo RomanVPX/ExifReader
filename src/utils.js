@@ -12,12 +12,45 @@ export function getDataView(data, byteOffset, byteLength) {
     }
 }
 
-export function getStringFromDataView(dataView, offset, length) {
+export function getStringFromDataViewUTF8(dataView, offset, length) {
+    // Use TextDecoder to correctly decode UTF-8 (or other encodings if specified)
+    try {
+        // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
+        // Need to create a view on the specific part of the buffer, I guess...
+        const actualLength = Math.min(length, dataView.byteLength - offset);
+        if (actualLength <= 0) {
+            return '';
+        }
+        const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
+        // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
+        return new TextDecoder('utf-8', {ignoreBOM: true, fatal: false}).decode(uint8Array);
+    } catch (e) {
+        // console.error('Failed to decode string using TextDecoder:', e);
+        // Return empty string on decode error. Any better way to handle this?
+        return '';
+    }
+}
+
+export function getStringFromBytesSimple(dataView, offset, length) {
     const chars = [];
     for (let i = 0; i < length && offset + i < dataView.byteLength; i++) {
         chars.push(dataView.getUint8(offset + i));
     }
-    return getStringValueFromArray(chars);
+    // Use TextDecoder to correctly decode UTF-8
+    try {
+        // XMP spec mandates UTF-8, UTF-16BE, or UTF-16LE. UTF-8 is most common.
+        // Need to create a view on the specific part of the buffer.
+        const actualLength = Math.min(length, dataView.byteLength - offset);
+        if (actualLength <= 0) {
+            return '';
+        }
+        const uint8Array = new Uint8Array(dataView.buffer, dataView.byteOffset + offset, actualLength);
+        // Use 'utf-8' and ignore BOM. fatal: false replaces errors with U+FFFD.
+        return new TextDecoder('utf-8', {ignoreBOM: true, fatal: false}).decode(uint8Array);
+    } catch (e) {
+        // console.error('Failed to decode string using TextDecoder:', e);
+        return '';
+    }
 }
 
 export function getNullTerminatedStringFromDataView(dataView, offset) {
