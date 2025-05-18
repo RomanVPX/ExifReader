@@ -207,7 +207,8 @@ function getAttributes(element) {
     const attributes = {};
 
     for (let i = 0; i < element.attributes.length; i++) {
-        attributes[element.attributes[i].nodeName] = decodeURIComponent(escape(element.attributes[i].value));
+        // Directly use the attribute value, assuming it's correctly decoded earlier or handled by the XML parser.
+        attributes[element.attributes[i].nodeName] = element.attributes[i].value;
     }
 
     return attributes;
@@ -289,8 +290,10 @@ function getDescription(value, name = undefined) {
         if ((name) && (typeof XmpTagNames[name] === 'function')) {
             return XmpTagNames[name](value);
         }
-        return decodeURIComponent(escape(value));
+        // Directly return the value, assuming it's correctly decoded earlier.
+        return value;
     } catch (error) {
+        // If there's still an error, return the original value.
         return value;
     }
 }

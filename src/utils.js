@@ -64,6 +64,7 @@ export function getNullTerminatedStringFromDataView(dataView, offset) {
         chars.push(char);
         i++;
     }
+    // Note: getStringValueFromArray still uses String.fromCharCode on each byte.
     return getStringValueFromArray(chars);
 }
 
